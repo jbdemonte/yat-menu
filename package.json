@@ -1,0 +1,15 @@
+{
+  "name": "yat-menu",
+  "version": "1.0.0",
+  "description": "A lightweight terminal menu which both provides node classic and promise usage without any dependency",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:jbdemonte/yat-menu.git"
+  },
+  "author": "Jean-Baptiste Demonte <jbdemonte@gmail.com>",
+  "license": "MIT"
+}
