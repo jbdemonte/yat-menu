@@ -1,5 +1,6 @@
 var defaultOptions = {
   header: [],
+  footer: [],
   selected: 0,
   selector: '> ',
   clearOnEnd: true,
@@ -24,6 +25,9 @@ function menu(items, options, callback) {
   if (!Array.isArray(options.header)) {
     options.header = (options.header || '').split(/\n/);
   }
+  if (!Array.isArray(options.footer)) {
+    options.footer = (options.footer || '').split(/\n/);
+  }
 
   var P = menu.Promise || Promise;
 
@@ -44,6 +48,11 @@ function menu(items, options, callback) {
       process.stdout.write(index === selected ? options.selector : empty);
       process.stdout.write(item);
       process.stdout.write('\n');
+    });
+
+    // display header
+    options.footer.forEach(function (line) {
+      process.stdout.write(line + '\n');
     });
 
     // catch keyboard

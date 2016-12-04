@@ -24,6 +24,7 @@ menu(items, [options], [callback])
 Available options:
 
 * `header` - string[]|string - Header to display - if is a string, will be split on \n - default `[]`
+* `footer` - string[]|string - Footer to display - if is a string, will be split on \n - default `[]`
 * `selected` - boolean - Initial selected index - default `0`
 * `selector` - boolean - String to preset the selected item with - default `> `
 * `clearOnEnd` - boolean - Clear screen on end - default `true`
