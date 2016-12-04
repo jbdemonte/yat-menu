@@ -29,6 +29,7 @@ Available options:
 * `selector` - boolean - String to preset the selected item with - default `> `
 * `clearOnEnd` - boolean - Clear screen on end - default `true`
 * `cursorOnEnd` - boolean - Display cursor on end - default `true`
+* `returnIndex` - boolean - If true, returned value will be the selected index or -1 on exit - default `false`
 
 Keyboard usage:
 

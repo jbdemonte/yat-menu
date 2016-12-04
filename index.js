@@ -4,7 +4,8 @@ var defaultOptions = {
   selected: 0,
   selector: '> ',
   clearOnEnd: true,
-  cursorOnEnd: true
+  cursorOnEnd: true,
+  returnIndex: false
 };
 
 function clear () {
@@ -69,7 +70,11 @@ function menu(items, options, callback) {
       if (options.cursorOnEnd) {
         cursor(true);
       }
-      resolve(value);
+      if (options.returnIndex) {
+        resolve(value ? selected : -1);
+      } else {
+        resolve(value ? items[selected] : undefined);
+      }
     }
 
     function select(value) {
@@ -95,15 +100,14 @@ function menu(items, options, callback) {
 
       // esc, esc, ctrl + c
       if (key === '\x1b' || key === '\x1b\x1b' || key === '\u0003') {
-        send();
+        send(false);
       }
 
       // return
       if (key === '\r') {
-        send(items[selected]);
+        send(true);
       }
     }
-
   });
 
   if (callback) {
