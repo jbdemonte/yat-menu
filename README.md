@@ -34,9 +34,19 @@ Available options:
 Keyboard usage:
 
 * `UP` / `DOWN` arrow: choose an item
+* `LEFT` / `RIGHT` arrow: choose an item on next page (when list is bigger than console)
 * `ESC` / `CTRL + C`: exit returning `undefined`
 * `RETURN`: exit returning the selected item
 
+## Header / Footer templating
+
+Header & footer are always refreshed, and these values are usable:
+
+*  `{{index}}` Current index (from 1 to items length)
+*  `{{total}}` Items length
+*  `{{page}}` Page Index (from 1 to ...)
+*  `{{pages}}` Total page length
+*  `{{value}}` Current value
 
 ## Promise
 
@@ -51,7 +61,7 @@ menu.Promise = require('bluebird');
 ## Example of use
 
 ```js
-menu(['Item 1', 'Item 2', 'Item 3'], {header: 'Choose:'})
+menu(['Item 1', 'Item 2', 'Item 3'], {header: 'Choose:', footer: 'selection: {{value}} ({{index}}/{{total}})'})
   .then(function (item) {
     if (item) {
         console.log('Selected: ', item);
