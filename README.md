@@ -13,7 +13,6 @@ npm install --save yat-menu
 
 ```js
 var menu = require('yat-menu');
-
 menu(items, [options], [callback])
 ```
 
@@ -23,13 +22,16 @@ menu(items, [options], [callback])
 
 Available options:
 
-* `header` - string[]|string - Header to display - if is a string, will be split on \n - default `[]`
-* `footer` - string[]|string - Footer to display - if is a string, will be split on \n - default `[]`
-* `selected` - boolean - Initial selected index - default `0`
-* `selector` - boolean - String to preset the selected item with - default `> `
 * `clearOnEnd` - boolean - Clear screen on end - default `true`
 * `cursorOnEnd` - boolean - Display cursor on end - default `true`
+* `footer` - string[]|string - Footer to display - if is a string, will be split on \n - default `[]`
+* `fullInverse` - boolean - If true, complete selected line video will be inversed
+* `header` - string[]|string - Header to display - if is a string, will be split on \n - default `[]`
+* `inverse` - boolean - If true, selected item video will be inversed
 * `returnIndex` - boolean - If true, returned value will be the selected index or -1 on exit - default `false`
+* `selected` - boolean - Initial selected index - default `0`
+* `selector` - boolean - String to preset the selected item with - default `> `
+* `prefix` - string - String to preset the not selected item with - default empty
 
 Keyboard usage:
 
@@ -67,6 +69,39 @@ menu(['Item 1', 'Item 2', 'Item 3'], {header: 'Choose:', footer: 'selection: {{v
         console.log('Selected: ', item);
     } else {
         console.log('No item selected');
+    }
+    process.exit(0);
+  })
+  .catch(function (err) {
+    console.log(err);
+    process.exit(0);
+  });
+```
+
+## Example of use with colors and video inversion
+
+Foreground color code available on [this page](http://invisible-island.net/xterm/ctlseqs/ctlseqs.html)
+You also can use dedicated modules to play with color ([color](https://www.npmjs.com/package/color), [chalk](https://www.npmjs.com/package/chalk),...)
+
+```js
+var original = '\x1b[39m';  // Set foreground color to default
+var red = '\x1b[31m';       // Set foreground color to Red
+var blue = '\x1b[34m';      // Set foreground color to Blue
+
+var options = {
+  header: 'Choose:',
+  prefix: blue,
+  selector: red + '> ',
+  fullInverse: true,
+  footer: 'selection: ' + red + '{{value}}' + original + ' ({{index}}/{{total}})'
+};
+
+menu(['Item 1', 'Item 2', 'Item 3'], options)
+  .then(function (item) {
+    if (item) {
+      console.log('Selected: ', item);
+    } else {
+      console.log('No item selected');
     }
     process.exit(0);
   })

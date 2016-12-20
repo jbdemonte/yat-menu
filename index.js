@@ -2,9 +2,12 @@ var defaultOptions = {
   header: [],
   footer: [],
   selected: 0,
-  selector: '> ',
+  prefix: '',         // prefix for un-selected item
+  selector: '> ',     // prefix for selected item
   clearOnEnd: true,
   cursorOnEnd: true,
+  inverse: false,
+  fullInverse: false,
   returnIndex: false
 };
 
@@ -26,12 +29,46 @@ function split(input) {
   return (input || '').split('\n').join('\n').split('\n');
 }
 
+var modifierRE = new RegExp('\u001B\[[0-9]+m', 'g');
+
+/**
+ * Return String length removing XTerm Control Sequences
+ * @param input
+ * @return {Number}
+ */
+function getLen(input) {
+  return (input || '').replace(modifierRE, '').length;
+}
+
+/**
+ * Substr handling XTerm Control Sequences
+ * @param input
+ * @param len
+ */
+function substr(input, len) {
+  var c, escaped;
+  var result = '';
+  for (var i=0; i<input.length && len; i++) {
+    c = input[i];
+    if (c === '\u001B') {
+      escaped = true;
+    } else if (escaped) {
+      escaped = c !== 'm';
+    } else {
+      len--;
+    }
+    result += c;
+  }
+  return result;
+}
+
 module.exports = function menu(items, options, callback) {
   if (typeof options === 'function') {
     callback = options;
     options = {};
   }
   options = Object.assign({}, defaultOptions, options);
+  options.inverse = options.inverse || options.fullInverse;
   if (!Array.isArray(options.header)) {
     options.header = split(options.header);
   }
@@ -44,7 +81,7 @@ module.exports = function menu(items, options, callback) {
   var promise = new P(function (resolve) {
     var min, max, page, pages, pageLen;
     var index = Math.max(0, Math.min(items.length - 1, options.selected));
-    var empty = (new Array(options.selector.length + 1)).join(' ');
+    var empty = options.prefix + (new Array(getLen(options.selector) - getLen(options.prefix) + 1)).join(' ');
 
     // catch keyboard
     process.stdin.setRawMode(true);
@@ -56,7 +93,20 @@ module.exports = function menu(items, options, callback) {
 
     display();
 
-    function format(line) {
+    function format(line, inverse) {
+      var foreground = '\x1b[39m';  // original foreground
+      var prefix = '\u001B[7m';     // inverse
+      var suffix = '\u001B[27m';    // positive (not inverse)
+      var middle = '';
+      var len;
+
+      if (!inverse) {
+        prefix = suffix; // disable any other inversion
+        suffix = '';
+      } else if (!options.fullInverse) {
+        middle = suffix;
+        suffix = '';
+      }
       line = line
         .replace(/\{\{page}}/g, page + 1)
         .replace(/\{\{pages}}/g, pages)
@@ -64,12 +114,14 @@ module.exports = function menu(items, options, callback) {
         .replace(/\{\{total}}/g, items.length)
         .replace(/\{\{value}}/g, items[index]);
 
-      if (line.length > process.stdout.columns) {
-        line = line.substr(0, process.stdout.columns - 3) + '...';
+      len = getLen(line);
+
+      if (len > process.stdout.columns) {
+        line = substr(line, process.stdout.columns - 3) + '...';
       } else {
-        line = line + (new Array(process.stdout.columns - line.length + 1)).join(' ');
+        line = line + middle + (new Array(process.stdout.columns - len + 1)).join(' ');
       }
-      return line;
+      return prefix + line + suffix + foreground;
     }
 
     function header() {
@@ -105,7 +157,12 @@ module.exports = function menu(items, options, callback) {
       header();
 
       for (var i = min; i <= max; i++) {
-        process.stdout.write(format((i === index ? options.selector : empty) + items[i]));
+        process.stdout.write(
+          format(
+            (i === index ? options.selector : empty) + items[i],
+            options.inverse && i === index
+          )
+        );
         if (i < max) {
           process.stdout.write('\n');
         }
@@ -133,13 +190,13 @@ module.exports = function menu(items, options, callback) {
     function select(value) {
       // unselect previous item
       process.stdout.cursorTo(0, index - min + options.header.length);
-      process.stdout.write(empty);
+      process.stdout.write(format(empty + items[index], false));
 
       // select new item
       index = value;
       header();
       process.stdout.cursorTo(0, index - min + options.header.length);
-      process.stdout.write(options.selector);
+      process.stdout.write(format(options.selector + items[index], options.inverse));
       footer();
     }
 
