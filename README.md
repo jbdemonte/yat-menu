@@ -29,7 +29,7 @@ Available options:
 * `header` - string[]|string - Header to display - if is a string, will be split on \n - default `[]`
 * `inverse` - boolean - If true, selected item video will be inversed
 * `returnIndex` - boolean - If true, returned value will be the selected index or -1 on exit - default `false`
-* `selected` - boolean - Initial selected index - default `0`
+* `selected` - integer - Initial selected index - default `0`
 * `selector` - boolean - String to preset the selected item with - default `> `
 * `prefix` - string - String to preset the not selected item with - default empty
 
@@ -80,7 +80,7 @@ menu(['Item 1', 'Item 2', 'Item 3'], {header: 'Choose:', footer: 'selection: {{v
 
 ## Example of use with colors and video inversion
 
-Foreground color code available on [this page](http://invisible-island.net/xterm/ctlseqs/ctlseqs.html)
+Foreground color code available on [this page](http://invisible-island.net/xterm/ctlseqs/ctlseqs.html)  
 You also can use dedicated modules to play with color ([color](https://www.npmjs.com/package/color), [chalk](https://www.npmjs.com/package/chalk),...)
 
 ```js
