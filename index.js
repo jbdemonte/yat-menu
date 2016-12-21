@@ -132,7 +132,7 @@ module.exports = function menu(items, options, callback) {
     }
 
     function footer() {
-      process.stdout.cursorTo(0, header.length + max - min + 2, 0);
+      process.stdout.cursorTo(0, options.header.length + max - min + 1);
       options.footer.forEach(function (line, index) {
         process.stdout.write((index ? '\n' : '') + format(line));
       });
