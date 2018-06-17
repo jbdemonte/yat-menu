@@ -63,7 +63,8 @@ function substr(input, len) {
   return result;
 }
 
-module.exports = function menu(items, options, callback) {
+
+function menu(items, options, callback) {
   if (typeof options === 'function') {
     callback = options;
     options = {};
@@ -77,9 +78,7 @@ module.exports = function menu(items, options, callback) {
     options.footer = split(options.footer);
   }
 
-  var P = menu.Promise || Promise;
-
-  var promise = new P(function (resolve) {
+  var promise = new menu.Promise(function (resolve) {
     var min, max, page, pages, pageLen;
     var index = Math.max(0, Math.min(items.length - 1, options.selected));
     var empty = options.prefix + (new Array(getLen(options.selector) - getLen(options.prefix) + 1)).join(' ');
@@ -109,11 +108,11 @@ module.exports = function menu(items, options, callback) {
         suffix = '';
       }
       line = line
-        .replace(/\{\{page}}/g, page + 1)
-        .replace(/\{\{pages}}/g, pages)
-        .replace(/\{\{index}}/g, index + 1)
-        .replace(/\{\{total}}/g, items.length)
-        .replace(/\{\{value}}/g, items[index]);
+        .replace(/{{page}}/g, page + 1)
+        .replace(/{{pages}}/g, pages)
+        .replace(/{{index}}/g, index + 1)
+        .replace(/{{total}}/g, items.length)
+        .replace(/{{value}}/g, items[index]);
 
       len = getLen(line);
 
@@ -189,7 +188,7 @@ module.exports = function menu(items, options, callback) {
     }
 
     function select(value) {
-      // unselect previous item
+      // un-select previous item
       process.stdout.cursorTo(0, index - min + options.header.length);
       process.stdout.write(format(empty + items[index], false));
 
@@ -233,13 +232,13 @@ module.exports = function menu(items, options, callback) {
       }
 
       // right
-      if (key == '\u001B\u005B\u0043' && max < items.length - 1) {
+      if (key === '\u001B\u005B\u0043' && max < items.length - 1) {
         index = Math.min(index + pageLen, items.length - 1);
         display();
       }
 
       // left
-      if (key == '\u001B\u005B\u0044' && min) {
+      if (key === '\u001B\u005B\u0044' && min) {
         index -= pageLen;
         display();
       }
@@ -264,8 +263,11 @@ module.exports = function menu(items, options, callback) {
       .catch(function (err) {
         callback(err);
       });
-
   } else {
     return promise;
   }
-};
+}
+
+menu.Promise = Promise;
+
+module.exports = menu;
