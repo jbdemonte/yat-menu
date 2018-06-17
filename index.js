@@ -8,7 +8,8 @@ var defaultOptions = {
   cursorOnEnd: true,
   inverse: false,
   fullInverse: false,
-  returnIndex: false
+  returnIndex: false,
+  loop: true
 };
 
 function clear () {
@@ -202,21 +203,31 @@ module.exports = function menu(items, options, callback) {
 
     function keypress(key) {
       // up
-      if (key === '\u001B\u005B\u0041' && index) {
-        if (index > min) {
-          select(index - 1);
-        } else {
-          index--;
+      if (key === '\u001B\u005B\u0041') {
+        if (index) {
+          if (index > min) {
+            select(index - 1);
+          } else {
+            index--;
+            display();
+          }
+        } else if (options.loop) {
+          index = items.length - 1;
           display();
         }
       }
 
       // down
-      if (key === '\u001B\u005B\u0042' && index < items.length - 1) {
-        if (index < max) {
-          select(index + 1);
-        } else {
-          index++;
+      if (key === '\u001B\u005B\u0042') {
+        if (index < items.length - 1) {
+          if (index < max) {
+            select(index + 1);
+          } else {
+            index++;
+            display();
+          }
+        } else if (options.loop) {
+          index = 0;
           display();
         }
       }

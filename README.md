@@ -28,6 +28,7 @@ Available options:
 * `fullInverse` - boolean - If true, complete selected line video will be inversed
 * `header` - string[]|string - Header to display - if is a string, will be split on \n - default `[]`
 * `inverse` - boolean - If true, selected item video will be inversed
+* `loop` - boolean - if true, down on last entry go back to the first one, and top on first one go to the last one - default `true`
 * `returnIndex` - boolean - If true, returned value will be the selected index or -1 on exit - default `false`
 * `selected` - integer - Initial selected index - default `0`
 * `selector` - boolean - String to preset the selected item with - default `> `
