@@ -9,7 +9,8 @@ var defaultOptions = {
   inverse: false,
   fullInverse: false,
   returnIndex: false,
-  loop: true
+  loop: true,
+  searchTimeout: 1000
 };
 
 function clear () {
@@ -83,6 +84,8 @@ function menu(items, options, callback) {
     var index = Math.max(0, Math.min(items.length - 1, options.selected));
     var empty = options.prefix + (new Array(getLen(options.selector) - getLen(options.prefix) + 1)).join(' ');
 
+    var search = '', timer;
+
     // catch keyboard
     process.stdin.setRawMode(true);
     process.stdin.resume();
@@ -111,6 +114,7 @@ function menu(items, options, callback) {
         .replace(/{{page}}/g, page + 1)
         .replace(/{{pages}}/g, pages)
         .replace(/{{index}}/g, index + 1)
+        .replace(/{{search}}/g, search)
         .replace(/{{total}}/g, items.length)
         .replace(/{{value}}/g, items[index]);
 
@@ -203,6 +207,7 @@ function menu(items, options, callback) {
     function keypress(key) {
       // up
       if (key === '\u001B\u005B\u0041') {
+        search = '';
         if (index) {
           if (index > min) {
             select(index - 1);
@@ -218,6 +223,7 @@ function menu(items, options, callback) {
 
       // down
       if (key === '\u001B\u005B\u0042') {
+        search = '';
         if (index < items.length - 1) {
           if (index < max) {
             select(index + 1);
@@ -233,12 +239,14 @@ function menu(items, options, callback) {
 
       // right
       if (key === '\u001B\u005B\u0043' && max < items.length - 1) {
+        search = '';
         index = Math.min(index + pageLen, items.length - 1);
         display();
       }
 
       // left
       if (key === '\u001B\u005B\u0044' && min) {
+        search = '';
         index -= pageLen;
         display();
       }
@@ -252,6 +260,25 @@ function menu(items, options, callback) {
       if (key === '\r') {
         send(true);
       }
+
+      if (options.searchTimeout && key.charCodeAt(0) >= 32 && key.charCodeAt(0) <= 127) {
+        if (timer) {
+          clearTimeout(timer);
+        }
+        search += key;
+        items.some(function (item, idx) {
+          if (item.toLowerCase().trim().indexOf(search.toLowerCase().trim()) === 0) {
+            index = idx;
+            display();
+            return true;
+          }
+        });
+        timer = setTimeout(function () {
+          search = '';
+          display();
+        }, options.searchTimeout);
+      }
+
     }
   });
 

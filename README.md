@@ -30,6 +30,7 @@ Available options:
 * `inverse` - boolean - If true, selected item video will be inversed
 * `loop` - boolean - if true, down on last entry go back to the first one, and top on first one go to the last one - default `true`
 * `returnIndex` - boolean - If true, returned value will be the selected index or -1 on exit - default `false`
+* `searchTimeout` - integer - Duration before reseting the search, disable search by setting `0` - default `1000`
 * `selected` - integer - Initial selected index - default `0`
 * `selector` - boolean - String to preset the selected item with - default `> `
 * `prefix` - string - String to preset the not selected item with - default empty
@@ -49,6 +50,7 @@ Header & footer are always refreshed, and these values are usable:
 *  `{{total}}` Items length
 *  `{{page}}` Page Index (from 1 to ...)
 *  `{{pages}}` Total page length
+*  `{{search}}` Searched pattern
 *  `{{value}}` Current value
 
 ## Promise
