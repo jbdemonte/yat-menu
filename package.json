@@ -1,6 +1,6 @@
 {
   "name": "yat-menu",
-  "version": "1.4.1",
+  "version": "1.5.0",
   "description": "A lightweight terminal menu which both provides node classic and promise usage without any dependency",
   "main": "index.js",
   "scripts": {
